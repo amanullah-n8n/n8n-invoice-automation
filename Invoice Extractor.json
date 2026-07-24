@@ -1,0 +1,195 @@
+{
+  "name": "Invoice Extractor",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "52818ce8-15fc-436e-a5ee-ea8804edd28b",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1b6e9ee8-0e2b-4787-b35c-00c6df5de4f3",
+              "name": "invoice_text",
+              "value": "Invoice from XYZ supplies, Amount: 5000, Date: 2026-07-20, Due: 2026-08-05",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "3552f5cc-7757-4f86-8f64-209dba9227ed",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.item.json.invoice_text;\n\nconst vendorMatch = text.match(/Invoice from (.*?),/);\nconst vendor = vendorMatch ? vendorMatch[1] : \"Not found\";\n\nconst amountMatch = text.match(/Amount:\\s*(\\d+)/);\nconst amount = amountMatch ? amountMatch[1] : \"Not found\";\n\nconst dateMatch = text.match(/Date:\\s*([\\d-]+)/);\nconst date = dateMatch ? dateMatch[1] : \"Not found\";\n\nconst dueDateMatch = text.match(/Due:\\s*([\\d-]+)/);\nconst dueDate = dueDateMatch ? dueDateMatch[1] : \"Not found\";\n\nreturn { vendor, amount, date, dueDate, status: \"Unpaid\" };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "b71528c8-38a5-44e1-a99c-424112e22339",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1V52Dm45vackByVCS2Opw7lCRKWJjSWlX27-CMRlw7fs",
+          "mode": "list",
+          "cachedResultName": "Invoice extractor",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1V52Dm45vackByVCS2Opw7lCRKWJjSWlX27-CMRlw7fs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1V52Dm45vackByVCS2Opw7lCRKWJjSWlX27-CMRlw7fs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "vendor": "={{ $json.vendor }}",
+            "amount": "={{ $json.amount }}",
+            "date": "={{ $json.date }}",
+            "dueDate": "={{ $json.dueDate }}",
+            "status": "={{ $json.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "vendor",
+              "displayName": "vendor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "amount",
+              "displayName": "amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "dueDate",
+              "displayName": "dueDate",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        624,
+        0
+      ],
+      "id": "1fc115db-9438-492e-b622-7f842d6d5819",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "zgPxrP3Xm9gNoTqn",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e6ce7291-5149-452c-9654-e4549711a064",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b16438f171cdb5b80695fc0ae489e8a8e73a063371b31ec438e799872b89023d"
+  },
+  "nodeGroups": [],
+  "id": "h44RlCgOzGHK9LYz",
+  "tags": []
+}
